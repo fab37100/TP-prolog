@@ -1,0 +1,48 @@
+ffvii(personnage(aeris,cetras,soin,19,10000),ifalna).  
+ffvii(personnage(ifalna,cetras,pnj,6,15000),cloud).
+ffvii(personnage(cloud,soldat,heros,18,30000),cloud).
+ffvii(personnage(tifa,equipe,guerrier,11,15000),barret).
+ffvii(personnage(barret,equipe,guerrier,7,14000),cloud).
+ffvii(personnage(rougexiii,equipe,soin,18,11000),barret).  
+ffvii(personnage(yuffie,equipe,ninja,8,2000),barret).
+
+%Liste le groupe d'un personnage ou X est le groupe et Y le personnage
+groupe(X,Y):- ffvii(personnage(Y,X,_,_,_),_),!.
+
+%Liste le chef d'un personnage ou X est le groupe et Y le chef du groupe
+chef(X,Y):- ffvii(personnage(Y,_,_,_,_),X),!.
+
+%membre_valide va vérifier que le personnage X a bien comme chef final Cloud.
+%Pour cela, il va récupérer le chef du personnage puis faire la même chose avec son chef jusqu'a atteindre cloud. 
+%Et renvoie la valeur vrai ou faux
+membre_valide(cloud).
+membre_valide(X):- 
+	chef(Y,X),
+	membre_valide(Y).
+
+%Renvoie l'XP X du personnage Y 
+xp(X,Y):- ffvii(personnage(Y,_,_,_,X),_).
+
+%Vérifie si la côte de cote_popularite est supérieure à 9
+cote_popularite(Personnage):-
+	ffvii(personnage(Personnage,_,_,POP,_),_),
+	POP > 9.
+
+%Vérifie si l'XP Perso est plus grand que celui du chef avec le bonus des 5000XP. 
+check_xp_reel(XPChef,XPPerso):-
+	X is XPPerso+5000,
+	X > XPChef.
+
+%Exclusion : Ajoute automatiquement 5000 xp à cloud
+%Ajoute l'XP réel des personnage en fonction de leur cote de popularité
+xp_reelle(XPFinale,cloud):- xp(XP,cloud),XPFinale is XP+5000.
+xp_reelle(XPFinale,Perso):-
+	cote_popularite(Perso),
+	xp(XP,Perso),
+	chef(Chef,Perso),
+	xp(XPChef,Chef),
+	(check_xp_reel(XPChef,XP),
+	XPFinale is XPChef;
+	XPFinale is XP+5000);
+	xp(XP,Perso),
+	XPFinale is XP.

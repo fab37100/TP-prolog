@@ -1,0 +1,5 @@
+%Expetion : Renvoit 0 si 1 est entré
+factorielle(0,1).
+
+factorielle(NB,TOTAL):-
+NN is NB-1, factorielle(NN,_), TOTAL is NB*NN.

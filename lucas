@@ -1,0 +1,1 @@
+lucas(X,P,Q):- P \= 0, Q \= 0, pow(P,2,Y), X is Y-4*Q.
